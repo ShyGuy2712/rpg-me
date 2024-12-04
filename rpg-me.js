@@ -41,7 +41,7 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       circle: false,      // boolean for if character has a circle around it
     }
     // link to this issue on GitHub
-    this.issueLink = "https://github.com/haxtheweb/issues/issues/1414",
+    this.issueLink = "https://github.com/haxtheweb/issues/issues/1414"
   }
 
   // Lit reactive properties
@@ -78,8 +78,14 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
   render() {
     return html`
 <div class="wrapper">
-  <h3><span>${this.t.title}:</span> ${this.title}</h3>
-  <slot></slot>
+  <!-- div for character preview -->  
+  <div class="preview">
+
+  </div>
+  <!-- div for input section -->
+   <div class="input">
+
+   </div>
 </div>`;
   }
 
