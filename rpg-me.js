@@ -5,6 +5,8 @@
 import { LitElement, html, css } from "lit";
 import { DDDSuper } from "@haxtheweb/d-d-d/d-d-d.js";
 import { I18NMixin } from "@haxtheweb/i18n-manager/lib/I18NMixin.js";
+import "@haxtheweb/rpg-character/rpg-character.js";
+import "wired-elements";
 
 /**
  * `rpg-me`
@@ -20,19 +22,26 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
 
   constructor() {
     super();
-    this.title = "";
-    this.t = this.t || {};
-    this.t = {
-      ...this.t,
-      title: "Title",
-    };
-    this.registerLocalization({
-      context: this,
-      localesPath:
-        new URL("./locales/rpg-me.ar.json", import.meta.url).href +
-        "/../",
-      locales: ["ar", "es", "hi", "zh"],
-    });
+    this.title = "Create your own RPG-Character!"
+    // object of all the aspects of RPG-Character
+    this.settings = {
+      seed: "0000000000",    // 10 char seed - one value for each attribute (legs is set to 0 and ignored)
+      accessories: "0",
+      base: "0",            // male: 0-4, female: 5-9
+      leg: "0",             // Ignored, perma set to 0
+      face: "0",
+      faceItem: "0",
+      hair: "0",
+      pants: "0",
+      shirt: "0",
+      skin: "0",
+      hatColor: "0",
+      fire: false,        // boolean for if fire is shown (also makes character walk faster if true)
+      walking: false,     // boolean for if character should be walking
+      circle: false,      // boolean for if character has a circle around it
+    }
+    // link to this issue on GitHub
+    this.issueLink = "https://github.com/haxtheweb/issues/issues/1414",
   }
 
   // Lit reactive properties
@@ -40,6 +49,8 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
     return {
       ...super.properties,
       title: { type: String },
+      settings: { type: Object },
+      issueLink: { type: String },
     };
   }
 
