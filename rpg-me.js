@@ -40,8 +40,7 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       walking: false,     // boolean for if character should be walking
       circle: false,      // boolean for if character has a circle around it
     }
-    // link to this issue on GitHub
-    this.issueLink = "https://github.com/haxtheweb/issues/issues/1414"
+    this.issueLink = "https://github.com/haxtheweb/issues/issues/1414"      // link to this issue on GitHub
   }
 
   // Lit reactive properties
@@ -64,12 +63,20 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
         background-color: var(--ddd-theme-accent);
         font-family: var(--ddd-font-navigation);
       }
+      /* CSS for overall app */
       .wrapper {
-        margin: var(--ddd-spacing-2);
-        padding: var(--ddd-spacing-4);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: var(--ddd-spacing-p-10)
       }
-      h3 span {
-        font-size: var(--rpg-me-label-font-size, var(--ddd-font-size-s));
+      /* CSS for character display */
+      .preview {
+
+      }
+      /* CSS for input section */
+      .input {
+        
       }
     `];
   }
