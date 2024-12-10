@@ -148,7 +148,7 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       min="0"
       max="9"
       @change="${(e) =>
-        this._updateSettings("accessories", parseInt(e.details.value))
+        this._updateSettings("accessories", parseInt(e.detail.value))
       }"
     ></wired-slider>
   
@@ -184,7 +184,7 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       min="0"
       max="9"
       @change="${(e) =>
-        this._updateSettings("pants", parseInt(e.details.value))
+        this._updateSettings("pants", parseInt(e.detail.value))
       }"
     ></wired-slider>
 
@@ -196,7 +196,7 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       min="0"
       max="9"
       @change="${(e) =>
-        this._updateSettings("shirt", parseInt(e.details.value))
+        this._updateSettings("shirt", parseInt(e.detail.value))
       }"
     ></wired-slider>
 
@@ -208,7 +208,7 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       min="0"
       max="9"
       @change="${(e) =>
-        this._updateSettings("skin", parseInt(e.details.value))
+        this._updateSettings("skin", parseInt(e.detail.value))
       }"
     ></wired-slider>
 
@@ -220,7 +220,7 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       min="0"
       max="9"
       @change="${(e) =>
-        this._updateSettings("hatColor", partseInt(e.deatils.value))
+        this._updateSettings("hatColor", parseInt(e.detail.value))
       }"
     ></wired-slider>
 
@@ -232,7 +232,7 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       min="100"
       max="600"
       @change="${(e) =>
-        this._updateSettings("size", parseInt(e.details.value))
+        this._updateSettings("size", parseInt(e.detail.value))
       }"
    ></wired-slider>
 
