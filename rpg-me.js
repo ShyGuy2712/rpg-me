@@ -23,6 +23,15 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
   constructor() {
     super();
     this.title = "Create your own RPG-Character!"
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlseed = urlParams.get('seed');
+    console.log(urlseed);
+    if (urlseed) {
+      this.seed = urlseed;
+    }
+    else {
+      this.seed = "0000000000";
+    }
     // object of all the aspects of RPG-Character
     this.settings = {
       seed: "0000000000",    // 10 char seed - one value for each attribute (legs is set to 0 and ignored)
@@ -39,8 +48,8 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       fire: false,        // boolean for if fire is shown (also makes character walk faster if true)
       walking: false,     // boolean for if character should be walking
       circle: false,      // boolean for if character has a circle around it
-      size: 200           // number of px character takes up (default = 200)
-    }
+      size: 200,           // number of px character takes up (default = 200)
+    };
     this.issueLink = "https://github.com/haxtheweb/issues/issues/1414"      // link to this issue on GitHub
   }
 
@@ -73,11 +82,21 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       }
       /* CSS for character display */
       .preview {
-
+        flex: 1;
+        position: relative;
+        min-width: 300px;
+        text-align: center;
       }
       /* CSS for input section */
       .input {
-        
+        flex: auto;
+      }
+
+      wired-checkbox,
+      wired-slider {
+        display: block;
+        padding: var(--ddd-spacing-p-4);
+        margin: var(--ddd-spacing-p-4);
       }
     `];
   }
@@ -205,6 +224,18 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       }"
     ></wired-slider>
 
+  <!-- Slider for character size -->
+   <label for="characterSize">Character Size:</label>
+   <wired-slider
+      id="characterSize"
+      value="${this.settings.size}"
+      min="100"
+      max="600"
+      @change="${(e) =>
+        this._updateSettings("size", parseInt(e.details.value))
+      }"
+   ></wired-slider>
+
   <!-- Checkbox for if character is on fire -->
     <wired-checkbox
       id="fire"
@@ -223,6 +254,15 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       }"
     >Walking:</wired-checkbox>
 
+  <!-- Checkbox for if character is in a circle -->
+    <wired-checkbox
+      id="circle"
+      ?checked="${this.settings.circle}"
+      @change="${(e) =>
+        this._updateSettings("circle", e.target.checked)
+      }"
+    >Circle:</wired-checkbox>
+    
     <button @click="${this._createLink}">
       Share your Character!
     </button>
