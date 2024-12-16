@@ -45,6 +45,7 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       shirt: 0,
       skin: 0,
       hatColor: 0,
+      hat: "none",
       fire: false,        // boolean for if fire is shown (also makes character walk faster if true)
       walking: false,     // boolean for if character should be walking
       circle: false,      // boolean for if character has a circle around it
@@ -224,6 +225,26 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       }"
     ></wired-slider>
 
+  <!-- Selector for hat -->
+   <label for="hat">Hat:</label>
+   <wired-combo
+      .selected="${this.settings.hat}"
+      @selected="${(e) =>
+        this._updateSettings('hat', e.detail.selected)
+      }">
+      <wired-item value="none">Default</wired-item>
+      <wired-item value="bunny">Bunny</wired-item>
+      <wired-item value="coffee">Coffee</wired-item>
+      <wired-item value="construction">Construction</wired-item>
+      <wired-item value="cowboy">Cowboy</wired-item>
+      <wired-item value="education">Education</wired-item>
+      <wired-item value="knight">Knight</wired-item>
+      <wired-item value="ninja">Ninja</wired-item>
+      <wired-item value="party">Party Hat</wired-item>
+      <wired-item value="pirate">Pirate</wired-item>
+      <wired-item value="watermelon">Watermelon</wired-item>
+  </wired-combo>
+
   <!-- Slider for character size -->
    <label for="characterSize">Character Size:</label>
    <wired-slider
@@ -305,14 +326,15 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
 
   // creates link to share with your friends (also copies it)
   _createLink() {
-    const baseUrl = window.location.href.split("?")[0];
-    const params = new URLSearchParams({ seed: this.settings.seed }).toString();
-    const shareLink = `${baseUrl}?${params}`;
-
-    navigator.clipboard.writeText(shareLink).then(
-      () => this._showNotification("Link Copied! Share with your friends!"),
-      (err) => this._showNotification(`Error: ${err}`)
-    );
+    this.url = window.location.origin
+    const params = new URLSearchParams({
+      seed: this.settings.seed,
+      hat: this.settings.hat,
+      fire: this.settings.fire,
+      walking: this.settings.walking,
+      circle: this.settings.circle,
+    });
+    return `${this.url}?${params.toString()}`;
   }
 
   // allows notifications to be shown
