@@ -88,6 +88,11 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
         min-width: 300px;
         text-align: center;
       }
+      .preview rpg-character {
+        height: var(--character-size, 200px);
+        width: var(--character-size, 200px);
+        transition: height 0.3s ease, width 0.3 ease;
+      }
       /* CSS for input section */
       .input {
         flex: auto;
@@ -120,11 +125,13 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       shirt="${this.settings.shirt}"
       skin="${this.settings.skin}"
       hatColor="${this.settings.hatColor}"
+      hat="${this.settings.hat}"
       .fire="${this.settings.fire}"
       .walking="${this.settings.walking}"
-      .circle="${this.settings.cicle}"
+      .circle="${this.settings.circle}"
       style="
         --character-size: ${this.settings.size}px;
+        --hat-color: hsl(${this.settings.hatColor}, 100%, 50%);
       "
       ></rpg-character>
   </div>
@@ -294,6 +301,8 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
   // applies seed to character
   _applySeed() {
     const seed = this.settings.seed;
+    const paddedSeed = seed.padStart(10, "0").slice(0, 10);
+    const values = paddedSeed.split("").map((v) => parseInt(v, 10));
     
     [
       this.settings.accessories,
@@ -326,26 +335,21 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
 
   // creates link to share with your friends (also copies it)
   _createLink() {
-    this.url = window.location.origin
-    const params = new URLSearchParams({
-      seed: this.settings.seed,
-      hat: this.settings.hat,
-      fire: this.settings.fire,
-      walking: this.settings.walking,
-      circle: this.settings.circle,
-    });
-    return `${this.url}?${params.toString()}`;
+    const link = `${location.origin}${location.pathname}?seed=${this.seed}&hat=${this.hat}&fire=${this.fire}&walking=${this.walking}&circle=${this.circle}`;
+    navigator.clipboard.writeText(link);
+    alert("Link copied to clipboard!");
   }
 
-  // allows notifications to be shown
-  _showNotification(message) {
-    const notification = this.shadowRoot.getElementById("notification");
-    notification.textContent = message;
-    notification.classList.add("show");
+  connectedCallback() {
+    super.connectedCallback();
+    const params = new URLSearchParams(window.location.search);
 
-    setTimeout(() => {
-      notification.classList.remove("show");
-    }, 2000);
+    if (params.has("seed")) {
+      this.settings.seed = params.get("seed");
+      this._applySeed();    // Applies seed to settings
+    }
+    console.log("Seed on page load:", this.settings.seed);
+    this.requestUpdate();
   }
 
 
