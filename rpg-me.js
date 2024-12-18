@@ -34,7 +34,6 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
     }
     // object of all the aspects of RPG-Character
     this.settings = {
-      seed: "0000000000",    // 10 char seed - one value for each attribute (legs is set to 0 and ignored)
       accessories: 0,
       base: 0,            // male: 0-4, female: 5-9
       leg: 0,             // Ignored, perma set to 0
@@ -59,6 +58,7 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
     return {
       ...super.properties,
       title: { type: String },
+      seed: { type: String },
       settings: { type: Object },
       issueLink: { type: String },
     };
@@ -71,38 +71,59 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       :host {
         display: block;
         color: var(--ddd-theme-primary);
-        background-color: var(--ddd-theme-accent);
+        background-color: var(--ddd-theme-default-limestoneGray);
         font-family: var(--ddd-font-navigation);
+        padding: var(--ddd-spacing-4);
+        --rpg-character-scale: 2.5;
       }
       /* CSS for overall app */
       .wrapper {
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         justify-content: center;
         padding: var(--ddd-spacing-p-10)
       }
       /* CSS for character display */
       .preview {
-        flex: 1;
-        position: relative;
+        background-color: var(--ddd-theme-default-keystoneYellow);
+        color: var(--ddd-theme-default-coalyGray);
         min-width: 300px;
         text-align: center;
-      }
-      .preview rpg-character {
-        height: var(--character-size, 200px);
-        width: var(--character-size, 200px);
-        transition: height 0.3s ease, width 0.3 ease;
+        border: 4px solid var(--ddd-theme-default-wonderPurple);
+        border-radius: 8px;
+        padding: var(--ddd-spacing-6);
+        margin: var(--ddd-spacing-2);
       }
       /* CSS for input section */
       .input {
-        flex: auto;
+        background-color: var(--ddd-theme-default-original87Pink);
+        color: var(--ddd-theme-default-roarMaxlight);
+        border: 4px solid var(--ddd-theme-default-wonderPurple);
+        padding: var(--ddd-spacing-6);
+        margin: var(--ddd-spacing-2);
       }
-
+      /* Spacing for wired items */
+      wired-combo,
       wired-checkbox,
       wired-slider {
         display: block;
         padding: var(--ddd-spacing-p-4);
         margin: var(--ddd-spacing-p-4);
+      }
+      /* CSS to allow chaning rpg-character's size */
+      .preview rpg-character {
+        height: var(--character-size, 200px);
+        width: var(--character-size, 200px);
+        transition: height 0.3s ease, width 0.3 ease;
+      }
+      /* Disable leg slider */
+      #leg {
+        opacity: 0.4;
+        pointer-events: none;
+      }
+      /* Just to make the drop downs show the list */
+      wired-item {
+        opacity: 1;
       }
     `];
   }
@@ -113,7 +134,8 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
 <div class="wrapper">
   <!-- div for character preview -->  
   <div class="preview">
-    <div class="seed">Seed: ${this.settings.seed}</div>
+    <div class="issueLink">Look at this issue on GitHub: <a href="${this.issueLink}" target="_blank">ISSUE</a></div>
+    <div class="seed">Seed: ${this.seed}</div>
     <rpg-character
       accessories="${this.settings.accessories}"
       base="${this.settings.base}"
@@ -159,9 +181,21 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
         this._updateSettings("accessories", parseInt(e.detail.value))
       }"
     ></wired-slider>
+
+  <!-- Slider for leg (DISABLED) -->
+      <label for="leg">Leg:</label>
+      <wired-slider
+        id="leg"
+        value="${this.settings.leg}"
+        min="0"
+        max="9"
+        @change="${(e) =>
+          this._updateSettings("leg", parseInt(e.detail.value))
+        }"
+      ></wired-slider>
   
   <!-- Slider for which face -->
-    <label for="face">Face</label>
+    <label for="face">Face:</label>
     <wired-slider
       id="face"
       value="${this.settings.face}"
@@ -271,7 +305,7 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       @change="${(e) =>
         this._updateSettings("fire", e.target.checked)
       }"
-    >On Fire:</wired-checkbox>
+    >On Fire</wired-checkbox>
 
   <!-- Checkbox for if character is walking -->
     <wired-checkbox
@@ -280,7 +314,7 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       @change="${(e) =>
         this._updateSettings("walking", e.target.checked)
       }"
-    >Walking:</wired-checkbox>
+    >Walking</wired-checkbox>
 
   <!-- Checkbox for if character is in a circle -->
     <wired-checkbox
@@ -289,7 +323,7 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
       @change="${(e) =>
         this._updateSettings("circle", e.target.checked)
       }"
-    >Circle:</wired-checkbox>
+    >Circle</wired-checkbox>
     
     <button @click="${this._createLink}">
       Share your Character!
@@ -300,7 +334,7 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
 
   // applies seed to character
   _applySeed() {
-    const seed = this.settings.seed;
+    const seed = this.seed;
     const paddedSeed = seed.padStart(10, "0").slice(0, 10);
     const values = paddedSeed.split("").map((v) => parseInt(v, 10));
     
@@ -323,7 +357,7 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
   // creates the seed based off of inputs
   _createSeed() {
     const { accessories, base, leg, face, faceItem, hair, pants, shirt, skin, hatColor } = this.settings;
-    this.settings.seed = `${accessories}${base}${leg}${face}${faceItem}${hair}${pants}${shirt}${skin}${hatColor}`
+    this.seed = `${accessories}${base}${leg}${face}${faceItem}${hair}${pants}${shirt}${skin}${hatColor}`
   }
 
   // updates settings when called
@@ -335,7 +369,7 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
 
   // creates link to share with your friends (also copies it)
   _createLink() {
-    const link = `${location.origin}${location.pathname}?seed=${this.seed}&hat=${this.hat}&fire=${this.fire}&walking=${this.walking}&circle=${this.circle}`;
+    const link = `${location.origin}${location.pathname}?seed=${this.seed}&hat=${this.settings.hat}&fire=${this.settings.fire}&walking=${this.settings.walking}&circle=${this.settings.circle}`;
     navigator.clipboard.writeText(link);
     alert("Link copied to clipboard!");
   }
@@ -345,10 +379,10 @@ export class RpgMe extends DDDSuper(I18NMixin(LitElement)) {
     const params = new URLSearchParams(window.location.search);
 
     if (params.has("seed")) {
-      this.settings.seed = params.get("seed");
+      this.seed = params.get("seed");
       this._applySeed();    // Applies seed to settings
     }
-    console.log("Seed on page load:", this.settings.seed);
+    console.log("Seed on page load:", this.seed);
     this.requestUpdate();
   }
 
